@@ -6,7 +6,7 @@
 /*   By: rbulanad <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 13:20:43 by rbulanad          #+#    #+#             */
-/*   Updated: 2024/02/08 16:01:12 by rbulanad         ###   ########.fr       */
+/*   Updated: 2024/02/09 15:37:43 by rbulanad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	parser(char **argv)
 	return (0);
 }
 
-int	ft_data_init(t_data *d, char **argv)
+int	ft_data_init(t_data *d, char **argv) //some parsing for int max in here
 {
 	if ((d->num_philo = ft_atol(argv[1])) == 0 || d->t_eat > 2147483647)
 		return (1);
@@ -41,30 +41,50 @@ int	ft_data_init(t_data *d, char **argv)
 		return (1);
 	if ((d->t_sleep = ft_atol(argv[4])) == 0 || d->t_eat > 2147483647)
 		return (1);
-	if (argv[5])
+	if (argv[5]) //optional arg
 	{
 		if ((d->num_eat = ft_atol(argv[5])) == 0 || d->t_eat > 2147483647)
 			return (1);
 	}
 	else
 		d->num_eat = -1;
+	d->isdead = 0;
 	return (0);
+}
+
+long	ft_gettime()
+{
+	long	ret;
+	struct	timeval t;
+
+	gettimeofday(&t, NULL);
+	ret = (t.tv_sec * 1000) + (t.tv_usec / 1000);
+
+	return (ret);
 }
 
 void	*routine(t_data *d)
 {
-	(void)d;
+	while (1)
+	{
+		d->death = ft_gettime();
+		if ((d->death - d->t) >= d->t_die)
+		{
+			printf("DEAD\n");
+			d->isdead = 1;
+			break ;
+		}
+	}
 	return (NULL);
 }
 
 int	main(int argc, char **argv)
 {
 	t_data	d;
-	struct	timeval time;
 
 	if (argc == 5 || argc == 6)
 	{
-		gettimeofday(&time, NULL);
+		d.t = ft_gettime();
 		if (parser(argv) == 1)
 		{
 			printf("ERROR: WRONG ARGS\n");
@@ -77,9 +97,8 @@ int	main(int argc, char **argv)
 		}
 		pthread_create(&d.tid, NULL, (void*)routine, &d);
 		pthread_join(d.tid, NULL);
-		printf("%ld %ld %ld %ld\n", d.num_philo, d.t_die, d.t_eat, d.t_sleep);
-		//gettimeofday(&time2, NULL);
-		//printf("prog time = %ld ms\n", (time2.tv_usec - time.tv_usec) / 1000);
+		if (d.isdead == 1)
+			printf("%ldms PHILO has died\n", d.death - d.t);
 	}
 	else
 		printf("ERROR: NUM ARGS");

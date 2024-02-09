@@ -6,7 +6,7 @@
 /*   By: rbulanad <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 13:30:04 by rbulanad          #+#    #+#             */
-/*   Updated: 2024/02/08 15:58:37 by rbulanad         ###   ########.fr       */
+/*   Updated: 2024/02/09 15:37:03 by rbulanad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,9 @@ typedef struct	s_data
 	long		t_eat;
 	long		t_sleep;
 	long		num_eat;
+	long		t;
+	long		death;
+	int		isdead;
 	pthread_t	tid;
 }		t_data;
 
