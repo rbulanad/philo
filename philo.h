@@ -6,7 +6,7 @@
 /*   By: rbulanad <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 13:30:04 by rbulanad          #+#    #+#             */
-/*   Updated: 2024/02/09 15:37:03 by rbulanad         ###   ########.fr       */
+/*   Updated: 2024/02/13 11:01:17 by rbulanad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <unistd.h>
 
 long	ft_atol(char *str);
+void	ft_sleep(long time);
+void	*routine(t_data *d);
 
 typedef struct	s_data
 {
@@ -28,10 +30,13 @@ typedef struct	s_data
 	long		t_eat;
 	long		t_sleep;
 	long		num_eat;
-	long		t;
-	long		death;
-	int		isdead;
+	long		last_meal;
+	long		start;
+	long		ph_count;
+	int		ate;
 	pthread_t	tid;
+	pthread_mutex_t	read;
+	pthread_mutex_t	write;
 }		t_data;
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: rbulanad <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 13:20:43 by rbulanad          #+#    #+#             */
-/*   Updated: 2024/02/09 15:37:43 by rbulanad         ###   ########.fr       */
+/*   Updated: 2024/02/13 10:53:39 by rbulanad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,9 @@ int	ft_data_init(t_data *d, char **argv) //some parsing for int max in here
 	}
 	else
 		d->num_eat = -1;
-	d->isdead = 0;
+	d->ate = 0;
+	d->ph_count = 0;
+	d->last_meal = d->start;
 	return (0);
 }
 
@@ -65,16 +67,18 @@ long	ft_gettime()
 
 void	*routine(t_data *d)
 {
-	while (1)
+	while (d->ate < 1)
 	{
-		d->death = ft_gettime();
-		if ((d->death - d->t) >= d->t_die)
-		{
-			printf("DEAD\n");
-			d->isdead = 1;
-			break ;
-		}
+		pthread_mutex_lock(&d->write);
+		d->last_meal = ft_gettime();
+		pthread_mutex_lock(&d->read);
+		printf("%ld ms PHILO is eating\n", d->last_meal - d->start);
+		d->ate += 1;
+		pthread_mutex_unlock(&d->write);
+		pthread_mutex_unlock(&d->read);
+		ft_sleep(d->t_eat);
 	}
+
 	return (NULL);
 }
 
@@ -84,7 +88,7 @@ int	main(int argc, char **argv)
 
 	if (argc == 5 || argc == 6)
 	{
-		d.t = ft_gettime();
+		d.start = ft_gettime();
 		if (parser(argv) == 1)
 		{
 			printf("ERROR: WRONG ARGS\n");
@@ -95,10 +99,25 @@ int	main(int argc, char **argv)
 			printf("ERROR: WRONG ARGS\n");
 			return (1);
 		}
+		ft_philo_creator();
 		pthread_create(&d.tid, NULL, (void*)routine, &d);
-		pthread_join(d.tid, NULL);
-		if (d.isdead == 1)
-			printf("%ldms PHILO has died\n", d.death - d.t);
+		while (1)
+		{
+			if ((d.last_meal - d.start) >= d.t_die)
+			{
+				pthread_mutex_unlock(&d.read);
+				printf("%ldms PHILO died\n", d.last_meal - d.start);
+				pthread_mutex_unlock(&d.read);
+				return (1);
+			}
+			if (d.ate > 0)
+			{
+				pthread_mutex_lock(&d.read);
+				printf("END\n");
+				pthread_mutex_unlock(&d.read);
+				return (0);
+			}
+		}
 	}
 	else
 		printf("ERROR: NUM ARGS");
