@@ -21,22 +21,28 @@
 
 long	ft_atol(char *str);
 void	ft_sleep(long time);
-void	*routine(t_data *d);
+long	ft_gettime();
 
 typedef struct	s_data
 {
-	long		num_philo;
-	long		t_die;
-	long		t_eat;
-	long		t_sleep;
-	long		num_eat;
-	long		last_meal;
-	long		start;
-	long		ph_count;
-	int		ate;
-	pthread_t	tid;
-	pthread_mutex_t	read;
+	long			num_philo;
+	long			t_die;
+	long			t_eat;
+	long			t_sleep;
+	long			num_eat;
+	long			start;
+	int				current;
+	long			*last_meal;
+	int				*ate;
+	pthread_t		*tid;
+	pthread_mutex_t	*forks;
 	pthread_mutex_t	write;
+	pthread_mutex_t	read;
+	pthread_mutex_t	philo;
 }		t_data;
 
+void	*routine(t_data *d);
+void	ft_philo_creator(t_data *d);
+int		ft_check_death(t_data *d);
+int		ft_check_ate(t_data *d);
 #endif

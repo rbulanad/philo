@@ -17,7 +17,7 @@ SRC 		= main.c \
 OBJ		= ${SRC:.c=.o}
 RM		= rm -f
 CC		= gcc
-CFLAGS		= -Wall -Wextra -Werror
+CFLAGS		= -Wall -Wextra -Werror 
 .c.o:
 	${CC} ${CFLAGS} -c $< -o ${<:.c=.o}
 
