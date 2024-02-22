@@ -6,7 +6,7 @@
 #    By: rbulanad <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/07 14:03:34 by rbulanad          #+#    #+#              #
-#    Updated: 2024/02/09 17:23:28 by rbulanad         ###   ########.fr        #
+#    Updated: 2024/02/21 19:25:22 by rbulanad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ SRC 		= main.c \
 OBJ		= ${SRC:.c=.o}
 RM		= rm -f
 CC		= gcc
-CFLAGS		= -Wall -Wextra -Werror 
+CFLAGS		= -Wall -Wextra -Werror -fsanitize=thread
 .c.o:
 	${CC} ${CFLAGS} -c $< -o ${<:.c=.o}
 

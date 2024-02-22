@@ -6,7 +6,7 @@
 /*   By: rbulanad <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 13:20:43 by rbulanad          #+#    #+#             */
-/*   Updated: 2024/02/13 10:53:39 by rbulanad         ###   ########.fr       */
+/*   Updated: 2024/02/21 19:08:43 by rbulanad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,8 @@ int	ft_data_init(t_data *d, char **argv) //some parsing for int max in here
 			return (1);
 	}
 	else
-		d->num_eat = 1;
+		d->num_eat = -1;
+	d->stop = 0;
 	d->start = ft_gettime();
 	d->tid = malloc(sizeof(pthread_t) * d->num_philo);
 	d->last_meal = malloc(sizeof(long) * d->num_philo);
@@ -61,6 +62,7 @@ int	ft_data_init(t_data *d, char **argv) //some parsing for int max in here
 		pthread_mutex_init(&d->forks[i], NULL);
 	}
 	pthread_mutex_init(&d->write, NULL);
+	pthread_mutex_init(&d->read, NULL);
 	pthread_mutex_init(&d->philo, NULL);
 	return (0);
 }
@@ -81,20 +83,20 @@ void	*routine(t_data *d)
 	int			current;
 
 
-	pthread_mutex_lock(&d->philo);
-	current = i++;
-	pthread_mutex_unlock(&d->philo);
-	if (current % 2)
-		ft_sleep(60);
-	while (d->ate[current] != d->num_eat)
+	if (d->num_philo == 1)
 	{
-		printf("%ld ms philo %d is eating\n", ft_gettime() - d->start, current);
-		d->last_meal[current] = ft_gettime();
-		ft_sleep(d->t_eat);
-		pthread_mutex_lock(&d->write);
-		d->ate[current]++;
-		//printf("ate = %d\n", d->ate[current]);
-		pthread_mutex_unlock(&d->write);
+		display(d, 1, "has taken a fork");
+		ft_sleep(d->t_die);
+	}
+	else
+	{
+		pthread_mutex_lock(&d->philo);//PHILO LOCK
+		current = i++;
+		pthread_mutex_unlock(&d->philo);//PHILO UNLOCK
+		if (current % 2)
+			ft_sleep(60);
+		while (d->stop == 0 && d->ate[current] != d->num_eat)
+			ft_eat(d, current);
 	}
 	return (NULL);
 }
@@ -117,14 +119,13 @@ int	main(int argc, char **argv)
 		}
 		ft_philo_creator(&d);
 		while (1)
-		{
 			if (ft_check_death(&d))
-				return (1);
-		}
+			{
+				ft_safe_exit(&d);
+				return (0);
+			}
 	}
 	else
 		printf("ERROR: NUM ARGS\n");
-	pthread_mutex_destroy(&d.write);
-	pthread_mutex_destroy(&d.philo);
 	return (0);
 }

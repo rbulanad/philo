@@ -6,7 +6,7 @@
 /*   By: rbulanad <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 13:30:04 by rbulanad          #+#    #+#             */
-/*   Updated: 2024/02/13 11:01:17 by rbulanad         ###   ########.fr       */
+/*   Updated: 2024/02/21 18:04:23 by rbulanad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,10 @@ typedef struct	s_data
 	long			t_sleep;
 	long			num_eat;
 	long			start;
-	int				current;
+	int			current;
 	long			*last_meal;
-	int				*ate;
+	int			*ate;
+	int			stop;
 	pthread_t		*tid;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	write;
@@ -43,6 +44,9 @@ typedef struct	s_data
 
 void	*routine(t_data *d);
 void	ft_philo_creator(t_data *d);
-int		ft_check_death(t_data *d);
-int		ft_check_ate(t_data *d);
+int	ft_check_death(t_data *d);
+int	ft_check_ate(t_data *d);
+void	ft_eat(t_data *d, int current);
+void	display(t_data *d, int num, char *str);
+void	ft_safe_exit(t_data *d);
 #endif
