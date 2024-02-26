@@ -49,6 +49,7 @@ int	ft_data_init(t_data *d, char **argv) //some parsing for int max in here
 	else
 		d->num_eat = -1;
 	d->stop = 0;
+	d->finish = 0;
 	d->start = ft_gettime();
 	d->tid = malloc(sizeof(pthread_t) * d->num_philo);
 	d->last_meal = malloc(sizeof(long) * d->num_philo);
@@ -107,10 +108,10 @@ void	*routine(t_data *d)
 			ft_sleep(60);
 		while (d->ate[current] != d->num_eat)
 			ft_eat(d, current);
-		display(d, current + 1, "is sleeping");
-		ft_sleep(d->t_sleep);
-		display(d, current + 1, "is thinking");
 	}
+	pthread_mutex_lock(&d->philo);//PHILO LOCK
+	d->finish++;
+	pthread_mutex_unlock(&d->philo);//PHILO UNLOCK
 	return (NULL);
 }
 
@@ -133,10 +134,18 @@ int	main(int argc, char **argv)
 		ft_philo_creator(&d);
 		while (1)
 			if (ft_check_death(&d))
+				break;
+		while (1)
+		{
+			pthread_mutex_lock(&d.philo);//PHILO LOCK
+			if (d.finish != d.num_philo)
 			{
-				ft_safe_exit(&d);
-				return (0);
+				pthread_mutex_unlock(&d.philo);//PHILO UNLOCK
+				break;
 			}
+			pthread_mutex_unlock(&d.philo);//PHILO UNLOCK
+		}
+		ft_safe_exit(&d);
 	}
 	else
 		printf("ERROR: NUM ARGS\n");

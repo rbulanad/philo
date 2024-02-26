@@ -23,17 +23,14 @@ void	ft_philo_creator(t_data *d)
 
 void	display(t_data *d, int num, char *str)
 {
-	int	stop;
-
 	pthread_mutex_lock(&d->stap);//STAP LOCK
-	stop = d->stop;
-	pthread_mutex_unlock(&d->stap);//STAP UNLOCK
-	if (stop == 0)
+	if (d->stop == 0)
 	{
 		pthread_mutex_lock(&d->read);//READ LOCK
 		printf("%ld ms philo %d %s\n", ft_gettime() - d->start, num, str);
 		pthread_mutex_unlock(&d->read);//READ UNLOCK
 	}
+	pthread_mutex_unlock(&d->stap);//STAP UNLOCK
 }
 
 void	ft_eat(t_data *d, int current)
@@ -57,6 +54,9 @@ void	ft_eat(t_data *d, int current)
 	pthread_mutex_unlock(&d->write);//WRITE UNLOCK
 	pthread_mutex_unlock(&d->forks[fork_l]);//FORK UNLOCK
 	pthread_mutex_unlock(&d->forks[fork_r]);//FORK2 UNLOCK
+	display(d, current + 1, "is sleeping");
+	ft_sleep(d->t_sleep);
+	display(d, current + 1, "is thinking");
 }
 
 int	ft_check_death(t_data *d)
@@ -113,9 +113,14 @@ void	ft_safe_exit(t_data *d)
 	pthread_mutex_destroy(&d->philo);
 	pthread_mutex_destroy(&d->read);
 	pthread_mutex_destroy(&d->write);
-	free(d->forks);
-	while(d->hands[++i])
+	i = -1;
+	while(++i < d->num_philo)
+	{
+		pthread_mutex_destroy(&d->forks[i]);
 		free(d->hands[i]);
+		//pthread_detach(d->tid[i]);
+	}
+	free(d->forks);
 	free(d->hands);
 	free(d->ate);
 	free(d->last_meal);
