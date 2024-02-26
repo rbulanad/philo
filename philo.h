@@ -6,7 +6,7 @@
 /*   By: rbulanad <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 13:30:04 by rbulanad          #+#    #+#             */
-/*   Updated: 2024/02/21 18:04:23 by rbulanad         ###   ########.fr       */
+/*   Updated: 2024/02/26 12:26:33 by rbulanad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,12 @@ typedef struct	s_data
 	long			*last_meal;
 	int			*ate;
 	int			stop;
+	int			**hands;
 	pthread_t		*tid;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	write;
 	pthread_mutex_t	read;
+	pthread_mutex_t stap;
 	pthread_mutex_t	philo;
 }		t_data;
 

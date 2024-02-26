@@ -6,7 +6,7 @@
 /*   By: rbulanad <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 13:20:43 by rbulanad          #+#    #+#             */
-/*   Updated: 2024/02/21 19:08:43 by rbulanad         ###   ########.fr       */
+/*   Updated: 2024/02/26 14:36:06 by rbulanad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ int	ft_data_init(t_data *d, char **argv) //some parsing for int max in here
 	d->tid = malloc(sizeof(pthread_t) * d->num_philo);
 	d->last_meal = malloc(sizeof(long) * d->num_philo);
 	d->ate = malloc(sizeof(int) * d->num_philo);
+	d->hands = malloc(sizeof(int *) * d->num_philo);
 	d->forks = malloc(sizeof(pthread_mutex_t) * d->num_philo);
 	int	i = -1; /////////////////
 	while (++i < d->num_philo)
@@ -60,8 +61,17 @@ int	ft_data_init(t_data *d, char **argv) //some parsing for int max in here
 		d->last_meal[i] = d->start;
 		d->ate[i] = 0;
 		pthread_mutex_init(&d->forks[i], NULL);
+		d->hands[i] = malloc(sizeof(int) * 2);
+		d->hands[i][0] = i;
+		d->hands[i][1] = (i + 1) % d->num_philo;
+		if (i % 2)
+		{
+			d->hands[i][0] = (i + 1) % d->num_philo;
+			d->hands[i][1] = i;
+		}
 	}
 	pthread_mutex_init(&d->write, NULL);
+	pthread_mutex_init(&d->stap, NULL);
 	pthread_mutex_init(&d->read, NULL);
 	pthread_mutex_init(&d->philo, NULL);
 	return (0);
@@ -95,8 +105,11 @@ void	*routine(t_data *d)
 		pthread_mutex_unlock(&d->philo);//PHILO UNLOCK
 		if (current % 2)
 			ft_sleep(60);
-		while (d->stop == 0 && d->ate[current] != d->num_eat)
+		while (d->ate[current] != d->num_eat)
 			ft_eat(d, current);
+		display(d, current + 1, "is sleeping");
+		ft_sleep(d->t_sleep);
+		display(d, current + 1, "is thinking");
 	}
 	return (NULL);
 }
