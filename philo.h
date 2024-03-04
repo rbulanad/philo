@@ -36,13 +36,11 @@ typedef struct	s_data
 	int			*ate;
 	int			stop;
 	int			**hands;
-	int			finish;
 	pthread_t		*tid;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	write;
 	pthread_mutex_t	read;
 	pthread_mutex_t stap;
-	pthread_mutex_t	philo;
 }		t_data;
 
 void	*routine(t_data *d);

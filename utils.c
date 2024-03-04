@@ -23,6 +23,7 @@ void	ft_philo_creator(t_data *d)
 
 void	display(t_data *d, int num, char *str)
 {
+
 	pthread_mutex_lock(&d->stap);//STAP LOCK
 	if (d->stop == 0)
 	{
@@ -47,11 +48,9 @@ void	ft_eat(t_data *d, int current)
 	display(d, current + 1, "is eating");
 	pthread_mutex_lock(&d->write);//WRITE LOCK
 	d->last_meal[current] = ft_gettime();
-	pthread_mutex_unlock(&d->write);//WRITE UNLOCK
-	ft_sleep(d->t_eat);
-	pthread_mutex_lock(&d->write);//WRITE LOCK
 	d->ate[current]++;
 	pthread_mutex_unlock(&d->write);//WRITE UNLOCK
+	ft_sleep(d->t_eat);
 	pthread_mutex_unlock(&d->forks[fork_l]);//FORK UNLOCK
 	pthread_mutex_unlock(&d->forks[fork_r]);//FORK2 UNLOCK
 	display(d, current + 1, "is sleeping");
@@ -75,14 +74,14 @@ int	ft_check_death(t_data *d)
 			pthread_mutex_lock(&d->stap);//STAP LOCK
 			d->stop = 1;
 			pthread_mutex_unlock(&d->stap);//STAP UNLOCK
-			return(printf("%ld ms philo %d died\n", ft_gettime() - d->start, i), 1);
+			return(printf("%ld ms philo %d died\n", ft_gettime() - d->start, i + 1), 1);
 		}
 		if (ft_check_ate(d) == 0)
 		{
 			pthread_mutex_lock(&d->stap);//STAP LOCK
 			d->stop = 1;
 			pthread_mutex_unlock(&d->stap);//STAP UNLOCK
-			return(printf("everyone ate\n"), 1);
+			return(1);
 		}
 	}
 	return (0);
@@ -110,19 +109,8 @@ void	ft_safe_exit(t_data *d)
 	int	i;
 
 	i = -1;
-	pthread_mutex_destroy(&d->philo);
-	pthread_mutex_destroy(&d->read);
-	pthread_mutex_destroy(&d->write);
-	i = -1;
 	while(++i < d->num_philo)
 	{
-		pthread_mutex_destroy(&d->forks[i]);
-		free(d->hands[i]);
-		//pthread_detach(d->tid[i]);
+		pthread_join(d->tid[i], NULL);
 	}
-	free(d->forks);
-	free(d->hands);
-	free(d->ate);
-	free(d->last_meal);
-	free(d->tid);
 }

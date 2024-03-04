@@ -31,7 +31,7 @@ int	parser(char **argv)
 	return (0);
 }
 
-int	ft_data_init(t_data *d, char **argv) //some parsing for int max in here
+int	ft_data_init(t_data *d, char **argv)
 {
 	if ((d->num_philo = ft_atol(argv[1])) == 0 || d->num_philo > 2147483647)
 		return (1);
@@ -41,7 +41,7 @@ int	ft_data_init(t_data *d, char **argv) //some parsing for int max in here
 		return (1);
 	if ((d->t_sleep = ft_atol(argv[4])) == 0 || d->t_sleep > 2147483647)
 		return (1);
-	if (argv[5]) //optional arg
+	if (argv[5])
 	{
 		if ((d->num_eat = ft_atol(argv[5])) == 0 || d->num_eat > 2147483647)
 			return (1);
@@ -49,7 +49,6 @@ int	ft_data_init(t_data *d, char **argv) //some parsing for int max in here
 	else
 		d->num_eat = -1;
 	d->stop = 0;
-	d->finish = 0;
 	d->start = ft_gettime();
 	d->tid = malloc(sizeof(pthread_t) * d->num_philo);
 	d->last_meal = malloc(sizeof(long) * d->num_philo);
@@ -74,7 +73,6 @@ int	ft_data_init(t_data *d, char **argv) //some parsing for int max in here
 	pthread_mutex_init(&d->write, NULL);
 	pthread_mutex_init(&d->stap, NULL);
 	pthread_mutex_init(&d->read, NULL);
-	pthread_mutex_init(&d->philo, NULL);
 	return (0);
 }
 
@@ -93,7 +91,6 @@ void	*routine(t_data *d)
 	static int	i;
 	int			current;
 
-
 	if (d->num_philo == 1)
 	{
 		display(d, 1, "has taken a fork");
@@ -101,17 +98,20 @@ void	*routine(t_data *d)
 	}
 	else
 	{
-		pthread_mutex_lock(&d->philo);//PHILO LOCK
+		pthread_mutex_lock(&d->read);//READ LOCK
 		current = i++;
-		pthread_mutex_unlock(&d->philo);//PHILO UNLOCK
+		pthread_mutex_unlock(&d->read);//READ UNLOCK
 		if (current % 2)
 			ft_sleep(60);
 		while (d->ate[current] != d->num_eat)
+		{
+			pthread_mutex_lock(&d->stap);//STAP LOCK
+			if (d->stop)
+				return (pthread_mutex_unlock(&d->stap), NULL);
+			pthread_mutex_unlock(&d->stap);//STAP UNLOCK
 			ft_eat(d, current);
+		}
 	}
-	pthread_mutex_lock(&d->philo);//PHILO LOCK
-	d->finish++;
-	pthread_mutex_unlock(&d->philo);//PHILO UNLOCK
 	return (NULL);
 }
 
@@ -122,28 +122,15 @@ int	main(int argc, char **argv)
 	if (argc == 5 || argc == 6)
 	{
 		if (parser(argv) == 1)
-		{
-			printf("ERROR: WRONG ARGS\n");
-			return (1);
-		}
+			return (printf("ERROR: WRONG ARGS\n"), 1);
 		if (ft_data_init(&d, argv) == 1)
-		{
-			printf("ERROR2: WRONG ARGS\n");
-			return (1);
-		}
+			return (printf("ERROR2: WRONG ARGS\n"), 1);
 		ft_philo_creator(&d);
 		while (1)
+		{
 			if (ft_check_death(&d))
 				break;
-		while (1)
-		{
-			pthread_mutex_lock(&d.philo);//PHILO LOCK
-			if (d.finish != d.num_philo)
-			{
-				pthread_mutex_unlock(&d.philo);//PHILO UNLOCK
-				break;
-			}
-			pthread_mutex_unlock(&d.philo);//PHILO UNLOCK
+			usleep(1);
 		}
 		ft_safe_exit(&d);
 	}
