@@ -19,9 +19,9 @@ static int	is_space(char c)
 
 long	ft_atol(char *str)
 {
-	int	i;
+	int		i;
 	long	result;
-	int	signe;
+	int		signe;
 
 	result = 0;
 	i = 0;

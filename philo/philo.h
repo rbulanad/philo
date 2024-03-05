@@ -6,7 +6,7 @@
 /*   By: rbulanad <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 13:30:04 by rbulanad          #+#    #+#             */
-/*   Updated: 2024/02/26 12:26:33 by rbulanad         ###   ########.fr       */
+/*   Updated: 2024/03/05 13:41:24 by rbulanad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@
 
 long	ft_atol(char *str);
 void	ft_sleep(long time);
-long	ft_gettime();
+long	ft_gettime(void);
 
-typedef struct	s_data
+typedef struct s_data
 {
 	long			num_philo;
 	long			t_die;
@@ -31,22 +31,24 @@ typedef struct	s_data
 	long			t_sleep;
 	long			num_eat;
 	long			start;
-	int			current;
+	int				current;
 	long			*last_meal;
-	int			*ate;
-	int			stop;
-	int			**hands;
+	int				*ate;
+	int				stop;
+	int				**hands;
 	pthread_t		*tid;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	write;
 	pthread_mutex_t	read;
-	pthread_mutex_t stap;
+	pthread_mutex_t	stap;
 }		t_data;
 
+int		ft_data_init(t_data *d, char **argv);
+int		more_init(t_data *d);
 void	*routine(t_data *d);
 void	ft_philo_creator(t_data *d);
-int	ft_check_death(t_data *d);
-int	ft_check_ate(t_data *d);
+int		ft_check_death(t_data *d);
+int		ft_check_ate(t_data *d);
 void	ft_eat(t_data *d, int current);
 void	display(t_data *d, int num, char *str);
 void	ft_safe_exit(t_data *d);

@@ -6,14 +6,15 @@
 #    By: rbulanad <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/07 14:03:34 by rbulanad          #+#    #+#              #
-#    Updated: 2024/02/21 19:25:22 by rbulanad         ###   ########.fr        #
+#    Updated: 2024/03/05 11:52:33 by rbulanad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME 		= philosophers
+NAME 		= philo
 SRC 		= main.c \
 		  funcs/ft_atol.c \
-		  utils.c
+		  utils.c \
+		  more_init.c
 OBJ		= ${SRC:.c=.o}
 RM		= rm -f
 CC		= gcc
