@@ -6,7 +6,7 @@
 /*   By: rbulanad <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 10:49:59 by rbulanad          #+#    #+#             */
-/*   Updated: 2024/03/06 11:30:36 by rbulanad         ###   ########.fr       */
+/*   Updated: 2024/03/06 13:55:13 by rbulanad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,11 @@ void	ft_eat(t_data *d, int current)
 	if (d->ate[current] < d->num_eat)
 		d->ate[current]++;
 	pthread_mutex_unlock(&d->write);
-	ft_sleep(d->t_eat);
+	ft_sleep(d, d->t_eat);
 	pthread_mutex_unlock(&d->forks[fork_l]);
 	pthread_mutex_unlock(&d->forks[fork_r]);
 	display(d, current + 1, "is sleeping");
-	ft_sleep(d->t_sleep);
+	ft_sleep(d, d->t_sleep);
 	display(d, current + 1, "is thinking");
 }
 

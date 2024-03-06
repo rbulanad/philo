@@ -6,7 +6,7 @@
 /*   By: rbulanad <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 13:20:43 by rbulanad          #+#    #+#             */
-/*   Updated: 2024/03/05 14:41:05 by rbulanad         ###   ########.fr       */
+/*   Updated: 2024/03/06 13:59:03 by rbulanad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,22 @@ int	parser(char **argv)
 	return (0);
 }
 
-void	ft_sleep(long time)
+void	ft_sleep(t_data *d, long time)
 {
 	long	save;
 
 	save = ft_gettime();
 	while (ft_gettime() != (save + time))
+	{
+		pthread_mutex_lock(&d->stap);
+		if (d->stop)
+		{
+			pthread_mutex_unlock(&d->stap);
+			break ;
+		}
+		pthread_mutex_unlock(&d->stap);
 		usleep(1);
+	}
 }
 
 long	ft_gettime(void)
@@ -57,7 +66,7 @@ void	*routine(t_data *d)
 	if (d->num_philo == 1)
 	{
 		display(d, 1, "has taken a fork");
-		ft_sleep(d->t_die);
+		ft_sleep(d, d->t_die);
 	}
 	else
 	{
@@ -65,7 +74,7 @@ void	*routine(t_data *d)
 		current = i++;
 		pthread_mutex_unlock(&d->read);
 		if (current % 2)
-			ft_sleep(60);
+			ft_sleep(d, 60);
 		while (ft_check_ate(d) != 0)
 		{
 			pthread_mutex_lock(&d->stap);

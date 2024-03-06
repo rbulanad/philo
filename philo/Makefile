@@ -6,7 +6,7 @@
 #    By: rbulanad <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/07 14:03:34 by rbulanad          #+#    #+#              #
-#    Updated: 2024/03/06 11:29:42 by rbulanad         ###   ########.fr        #
+#    Updated: 2024/03/06 13:42:31 by rbulanad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ SRC 		= main.c \
 OBJ		= ${SRC:.c=.o}
 RM		= rm -f
 CC		= gcc
-CFLAGS		= -Wall -Wextra -Werror -fsanitize=leak -g
+CFLAGS		= -Wall -Wextra -Werror
 
 ifdef MAKEBONUS
 	CFLAGS += -fsanitize=thread -g

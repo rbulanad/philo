@@ -6,7 +6,7 @@
 /*   By: rbulanad <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 13:30:04 by rbulanad          #+#    #+#             */
-/*   Updated: 2024/03/05 13:41:24 by rbulanad         ###   ########.fr       */
+/*   Updated: 2024/03/06 13:52:45 by rbulanad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 # include <unistd.h>
 
 long	ft_atol(char *str);
-void	ft_sleep(long time);
 long	ft_gettime(void);
 
 typedef struct s_data
@@ -43,6 +42,7 @@ typedef struct s_data
 	pthread_mutex_t	stap;
 }		t_data;
 
+void	ft_sleep(t_data *d, long time);
 int		ft_data_init(t_data *d, char **argv);
 int		more_init(t_data *d);
 void	*routine(t_data *d);
