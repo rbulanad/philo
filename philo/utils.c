@@ -6,7 +6,7 @@
 /*   By: rbulanad <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 10:49:59 by rbulanad          #+#    #+#             */
-/*   Updated: 2024/03/05 14:43:37 by rbulanad         ###   ########.fr       */
+/*   Updated: 2024/03/06 11:30:36 by rbulanad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,5 +100,16 @@ void	ft_safe_exit(t_data *d)
 
 	i = -1;
 	while (++i < d->num_philo)
+	{
 		pthread_join(d->tid[i], NULL);
+		free(d->hands[i]);
+	}
+	free(d->hands);
+	free(d->tid);
+	free(d->last_meal);
+	free(d->ate);
+	free(d->forks);
+	pthread_mutex_destroy(&d->write);
+	pthread_mutex_destroy(&d->stap);
+	pthread_mutex_destroy(&d->read);
 }
