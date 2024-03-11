@@ -14,7 +14,8 @@ NAME 		= philo
 SRC 		= main.c \
 		  funcs/ft_atol.c \
 		  utils.c \
-		  more_init.c
+		  more_init.c \
+		  more_utils.c
 OBJ		= ${SRC:.c=.o}
 RM		= rm -f
 CC		= gcc

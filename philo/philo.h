@@ -50,6 +50,9 @@ void	ft_philo_creator(t_data *d);
 int		ft_check_death(t_data *d);
 int		ft_check_ate(t_data *d);
 void	ft_eat(t_data *d, int current);
-void	display(t_data *d, int num, char *str);
+void	display(t_data *d, int num, char *str, int bypass);
 void	ft_safe_exit(t_data *d);
+void	ft_update_stap(t_data *d, int status);
+int		ft_is_stap(t_data *d);
+
 #endif

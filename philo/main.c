@@ -32,20 +32,13 @@ int	parser(char **argv)
 
 void	ft_sleep(t_data *d, long time)
 {
-	long	save;
+	long	end;
 
-	save = ft_gettime();
-	while (ft_gettime() != (save + time))
-	{
-		pthread_mutex_lock(&d->stap);
-		if (d->stop)
-		{
-			pthread_mutex_unlock(&d->stap);
-			break ;
-		}
-		pthread_mutex_unlock(&d->stap);
-		usleep(1);
-	}
+	if (ft_is_stap(d))
+		return ;
+	end = ft_gettime() + time;
+	while (ft_gettime() < end)
+		usleep(10);
 }
 
 long	ft_gettime(void)
@@ -65,7 +58,7 @@ void	*routine(t_data *d)
 
 	if (d->num_philo == 1)
 	{
-		display(d, 1, "has taken a fork");
+		display(d, 1, "has taken a fork", 0);
 		ft_sleep(d, d->t_die);
 	}
 	else
@@ -77,10 +70,8 @@ void	*routine(t_data *d)
 			ft_sleep(d, 60);
 		while (ft_check_ate(d) != 0)
 		{
-			pthread_mutex_lock(&d->stap);
-			if (d->stop)
-				return (pthread_mutex_unlock(&d->stap), NULL);
-			pthread_mutex_unlock(&d->stap);
+			if (ft_is_stap(d))
+				break ;
 			ft_eat(d, current);
 		}
 	}
@@ -102,7 +93,7 @@ int	main(int argc, char **argv)
 		{
 			if (ft_check_death(&d))
 				break ;
-			usleep(1);
+			ft_sleep(&d, 1);
 		}
 		ft_safe_exit(&d);
 	}

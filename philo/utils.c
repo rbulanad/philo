@@ -12,16 +12,14 @@
 
 #include "philo.h"
 
-void	display(t_data *d, int num, char *str)
+void	display(t_data *d, int num, char *str, int bypass)
 {
-	pthread_mutex_lock(&d->stap);
-	if (d->stop == 0)
-	{
-		pthread_mutex_lock(&d->read);
+	pthread_mutex_lock(&d->read);
+	if (ft_is_stap(d) == 0)
 		printf("%ld %d %s\n", ft_gettime() - d->start, num, str);
-		pthread_mutex_unlock(&d->read);
-	}
-	pthread_mutex_unlock(&d->stap);
+	else if (bypass)
+		printf("%ld %d %s\n", ft_gettime() - d->start, num, str);
+	pthread_mutex_unlock(&d->read);
 }
 
 void	ft_eat(t_data *d, int current)
@@ -32,10 +30,10 @@ void	ft_eat(t_data *d, int current)
 	fork_l = d->hands[current][0];
 	fork_r = d->hands[current][1];
 	pthread_mutex_lock(&d->forks[fork_l]);
-	display(d, current + 1, "has taken a fork");
+	display(d, current + 1, "has taken a fork", 0);
 	pthread_mutex_lock(&d->forks[fork_r]);
-	display(d, current + 1, "has taken a fork");
-	display(d, current + 1, "is eating");
+	display(d, current + 1, "has taken a fork", 0);
+	display(d, current + 1, "is eating", 0);
 	pthread_mutex_lock(&d->write);
 	d->last_meal[current] = ft_gettime();
 	if (d->ate[current] < d->num_eat)
@@ -44,9 +42,9 @@ void	ft_eat(t_data *d, int current)
 	ft_sleep(d, d->t_eat);
 	pthread_mutex_unlock(&d->forks[fork_l]);
 	pthread_mutex_unlock(&d->forks[fork_r]);
-	display(d, current + 1, "is sleeping");
+	display(d, current + 1, "is sleeping", 0);
 	ft_sleep(d, d->t_sleep);
-	display(d, current + 1, "is thinking");
+	display(d, current + 1, "is thinking", 0);
 }
 
 int	ft_check_death(t_data *d)
@@ -62,16 +60,14 @@ int	ft_check_death(t_data *d)
 		pthread_mutex_unlock(&d->write);
 		if (diff > d->t_die)
 		{
-			printf("%ld %d died\n", ft_gettime() - d->start, i + 1);
-			pthread_mutex_lock(&d->stap);
-			d->stop = 1;
-			return (pthread_mutex_unlock(&d->stap), 1);
+			ft_update_stap(d, 1);
+			display(d, i + 1, "died", 1);
+			return (1);
 		}
 		if (ft_check_ate(d) == 0)
 		{
-			pthread_mutex_lock(&d->stap);
-			d->stop = 1;
-			return (pthread_mutex_unlock(&d->stap), 1);
+			ft_update_stap(d, 1);
+			return (1);
 		}
 	}
 	return (0);
